@@ -1,0 +1,12 @@
+form input, form select
+{
+   display: block;
+   margin: 0.5em;
+}
+form, table
+{
+   border: 2px solid black;
+   border-radius: 4px;
+   width: max-content;
+   padding: 1em;
+}
