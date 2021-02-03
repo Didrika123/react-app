@@ -2,16 +2,36 @@ import React, { Component } from 'react'
 
 export default class PersonDetails extends Component {
    render() {
-      const {person, removePerson} = this.props;
-      if (this.props.person != null) 
-      {
+      const { person, removePerson } = this.props;
+      if (this.props.person != null) {
          return (
             <div>
-               Name: {person.name} <br />
-               City: {person.city} <br />
-               Langush: {person.languages.join(",")} <br />
-               Phone number: {person.phoneNumber} <br />
-               <button onClick={() => removePerson(person)}>Delete</button>
+               <table>
+                  <thead>
+                     <tr>
+                        <td><h2>{person.name}</h2></td>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>Country</td>
+                        <td>{person.city.country?.name}</td>
+                     </tr>
+                     <tr>
+                        <td>City</td>
+                        <td>{person.city.name}</td>
+                     </tr>
+                     <tr>
+                        <td>Languages</td>
+                        <td>{person.languages?.join(",")}</td>
+                     </tr>
+                     <tr>
+                        <td>Phone number</td>
+                        <td>{person.phoneNumber}</td>
+                     </tr>
+                  </tbody>
+               </table>
+               <button className="button-bad" onClick={() => removePerson(person)}>Delete</button>
             </div>
          )
       }

@@ -34,7 +34,7 @@ export default class CreatePerson extends Component {
 
       return (
          <form>
-            <h3>Add Person</h3>
+            <h2>Add Person</h2>
             <label htmlFor="name">Name</label>
             <input
                type="text"
@@ -67,7 +67,7 @@ export default class CreatePerson extends Component {
                {this.props.allLanguages.map((oneLanguage, index) => { return <option key={index} value={oneLanguage.id}>{oneLanguage.name}</option>; })}
             </select>
 
-            <input type="button" value="Submit" onClick={this.submitForm} />
+            <input  className="button-good" type="button" value="Add" onClick={this.submitForm} />
 
          </form>
       );

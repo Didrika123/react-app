@@ -5,9 +5,9 @@ const TableHeader = (props) => {
    return (
       <thead>
          <tr>
-            <th><button onClick={() => props.sortPersons("name")}>Name</button></th>
-            <th><button onClick={() => props.sortPersons("phoneNumber")}>Phone number</button></th>
-            <th>Action</th>
+            <th><button className="sortButton" onClick={() => props.sortPersons("name")}>Name</button></th>
+            <th><button className="sortButton" onClick={() => props.sortPersons("phoneNumber")}>Phone number</button></th>
+            <th></th>
          </tr>
       </thead>
    )
@@ -22,7 +22,7 @@ const TableBody = (props) => {
             <td>{row.name}</td>
             <td>{row.phoneNumber}</td>
             <td>
-               <button onClick={() => props.showDetails(row)}>Details</button>
+               <button  className="button-info" onClick={() => props.showDetails(row)}>Details</button>
             </td>
          </tr>
       )
@@ -36,12 +36,10 @@ export default class PersonList extends Component {
    render() {
       const { persons, sortPersons, showDetails } = this.props
       return (
-         <div>
-            <table>
-               <TableHeader sortPersons={sortPersons} />
-               <TableBody persons={persons} showDetails={showDetails}/>
-            </table>
-         </div>
+         <table>
+            <TableHeader sortPersons={sortPersons} />
+            <TableBody persons={persons} showDetails={showDetails}/>
+         </table>
       )
    }
 }
