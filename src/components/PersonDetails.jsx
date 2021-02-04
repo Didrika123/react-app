@@ -9,7 +9,7 @@ export default class PersonDetails extends Component {
                <table>
                   <thead>
                      <tr>
-                        <td><h2>{person.name}</h2></td>
+                        <th><h2>{person.name}</h2></th>
                      </tr>
                   </thead>
                   <tbody>

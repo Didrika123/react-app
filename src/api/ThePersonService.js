@@ -30,49 +30,31 @@ class PersonService {
 
       const url = 'https://localhost:44319/api/react/';
 
-      axios.post(url, this.assembleDTOPerson(person))
+      let response = await axios.post(url, this.assembleDTOPerson(person))
          .catch(function (error) { console.log(error) });
+      
+      return response != null? this.dissembleDTOPerson(response.data) : null;
    }
 
    async getAllLanguages(){
 
-      return [
-         {
-            id: 5,
-            name: 'Swahil',
-         },
-         {
-            id: 98,
-            name: 'Spnahish'
-         },
-         {
-            id: 126,
-            name: 'Russian'
-         },
-      ];
-   }
-   async getAllCities(){
-
-      const url = 'https://localhost:44319/api/react/countries/';
+      const url = 'https://localhost:44319/api/react/languages/';
       let response = await axios.get(url)
          .catch(function (error) { console.log(error) });
 
-      //return response != null? this.dissembleDTOPerson(response.data) : null;
-      console.log(response);
-      return [
-         {
-            id: 5,
-            name: 'Sofia'
-         },
-         {
-            id: 23,
-            name: 'Helsingfors'
-         },
-      ];
+      return response != null? response.data : null;
+   }
+   async getAllCities(){
+
+      const url = 'https://localhost:44319/api/react/cities/';
+      let response = await axios.get(url)
+         .catch(function (error) { console.log(error) });
+
+      return response != null? response.data : null;
    }
 
    assembleDTOPerson(person){
-      //console.log(person.languages)
+      //console.log(person)
       return { 
          id: person.id, 
          name: person.name, 
@@ -80,7 +62,7 @@ class PersonService {
          personLanguages: null,
          languageSelectionViewModel: {LanguageIds: person.languages.map( languageIdStr => {return Number(languageIdStr);}) }, 
          city: { 
-                 id: 1, 
+                 id: Number(person.city), 
                  name: "asd", 
                  country: { 
                             id: 0, 

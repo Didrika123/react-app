@@ -6,46 +6,9 @@ import PersonService from './api/ThePersonService'
 
 export default class App extends React.Component {
    state = {
-      persons: [
-         {
-            id: 3,
-            name: 'Charlie',
-            city: 23,
-            languages: [],
-            phoneNumber: 'aaa'
-         },
-         {
-            id: 5,
-            name: 'Marla',
-            city: 5,
-            languages: [5, 98],
-            phoneNumber: 'bbb'
-         },
-      ],
-      allCities: [
-         {
-            id: 5,
-            name: 'Sofia'
-         },
-         {
-            id: 23,
-            name: 'Helsingfors'
-         },
-      ],
-      allLanguages: [
-         {
-            id: 5,
-            name: 'Swahil',
-         },
-         {
-            id: 98,
-            name: 'Spnahish'
-         },
-         {
-            id: 126,
-            name: 'Russian'
-         },
-      ],
+      persons: [],
+      allCities: [],
+      allLanguages: [],
       personToShowDetailsOf: null,
       personsSortedBy: "unsorted",
       numSortedPersons: 0,
@@ -53,9 +16,9 @@ export default class App extends React.Component {
    }
 
    componentDidMount = () => {
-      (async() => {
+      (async () => {
          let data = await PersonService.getAll();
-         this.setState({persons: data});
+         this.setState({ persons: data });
       }).call();
    }
 
@@ -76,22 +39,28 @@ export default class App extends React.Component {
       PersonService.delete(personToRemove.id)
    }
    showAddPerson = () => {
-      (async() => {
+      (async () => {
          let langs = await PersonService.getAllLanguages();
          let cities = await PersonService.getAllCities();
-         this.setState({allCities: cities, allLanguages: langs, showCreatePerson: true });
+         this.setState({ allCities: cities, allLanguages: langs, showCreatePerson: true });
       }).call();
    }
    addPerson = (newPerson) => {
-      this.setState({ 
-         persons: [...this.state.persons, newPerson], 
-         personToShowDetailsOf: newPerson,
-         showCreatePerson: false })
-        
-      PersonService.add(newPerson);
+      (async () => {
+         newPerson = await PersonService.add(newPerson);
+         if (newPerson !== null)
+            this.setState({
+               persons: [...this.state.persons, newPerson],
+               personToShowDetailsOf: newPerson,
+               showCreatePerson: false
+            })
+
+      }).call();
+      if (newPerson === null)
+         return false;
    }
    showDetails = (person) => {
-      (async() => {
+      (async () => {
          person = await PersonService.get(person.id);
          this.setState({ personToShowDetailsOf: person, showCreatePerson: false })
       }).call();
@@ -101,20 +70,22 @@ export default class App extends React.Component {
       return (
          <div className="container">
             <h1>People Register</h1>
-            <section className="borderRight">
-               <PersonList persons={this.state.persons} sortPersons={this.sortPersons} showDetails={this.showDetails} />
-               <button  className="button-good" onClick={() => this.showAddPerson()}>&nbsp;+&nbsp;</button>
-            </section>
-            <section>
-               {this.state.showCreatePerson ?
-                  <CreatePerson addPerson={this.addPerson} allCities={this.state.allCities} allLanguages={this.state.allLanguages} />
-                  : this.state.personToShowDetailsOf !== null ?
-                     <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} />
-                     :
-                     <h2>Good Morning !</h2>
+            <main>
+               <section className="borderRight">
+                  <PersonList persons={this.state.persons} sortPersons={this.sortPersons} showDetails={this.showDetails} />
+                  <button className="button-good" onClick={() => this.showAddPerson()}>&nbsp;+&nbsp;</button>
+               </section>
+               <section>
+                  {this.state.showCreatePerson ?
+                     <CreatePerson addPerson={this.addPerson} allCities={this.state.allCities} allLanguages={this.state.allLanguages} />
+                     : this.state.personToShowDetailsOf !== null ?
+                        <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} />
+                        :
+                        <h2>Good Morning !</h2>
 
-               }
-            </section>
+                  }
+               </section>
+            </main>
          </div>
       )
    }

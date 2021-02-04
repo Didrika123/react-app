@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 export default class CreatePerson extends Component {
    initialState = {
       name: '',
-      city: 'Select City',
+      city: '',
       languages: [],
       phoneNumber: ''
    }
@@ -25,8 +25,8 @@ export default class CreatePerson extends Component {
 
    submitForm = () => {
       // validate event.preventdefault();
-      this.props.addPerson(this.state)
-      this.setState(this.initialState)
+      if(this.props.addPerson(this.state))
+         this.setState(this.initialState)
    }
 
    render() {
@@ -49,14 +49,17 @@ export default class CreatePerson extends Component {
                id="phoneNumber"
                value={phoneNumber}
                onChange={this.handleChange} />
+            <label htmlFor="city">City</label>
             <select
                type="text"
                name="city"
                id="city"
                value={city}
                onChange={this.handleChange}>
+               <option>Select City</option>
                {this.props.allCities.map((oneCity, index) => { return <option key={index} value={oneCity.id}>{oneCity.name}</option>; })}
             </select>
+            <label htmlFor="languages">Languages</label>
             <select
                multiple
                type="text"
