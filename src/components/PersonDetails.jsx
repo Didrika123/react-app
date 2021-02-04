@@ -22,12 +22,12 @@ export default class PersonDetails extends Component {
                         <td>{person.city.name}</td>
                      </tr>
                      <tr>
-                        <td>Languages</td>
-                        <td>{person.languages?.join(",")}</td>
-                     </tr>
-                     <tr>
                         <td>Phone number</td>
                         <td>{person.phoneNumber}</td>
+                     </tr>
+                     <tr>
+                        <td>Languages</td>
+                        <td>{person.languages?.map(lang => { return lang.name}).join(",")}</td>
                      </tr>
                   </tbody>
                </table>

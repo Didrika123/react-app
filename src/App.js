@@ -53,25 +53,12 @@ export default class App extends React.Component {
    }
 
    componentDidMount = () => {
-      const fetchData = async() => {
+      (async() => {
          let data = await PersonService.getAll();
          this.setState({persons: data});
-      };
-      fetchData();
+      }).call();
    }
 
-   removePerson = (personToRemove) => {
-      this.setState({ persons: this.state.persons.filter((person) => { return person !== personToRemove }), personToShowDetailsOf: null })
-      PersonService.delete(personToRemove.id)
-   }
-   addPerson = (newPerson) => {
-      this.setState({ 
-         persons: [...this.state.persons, newPerson], 
-         personToShowDetailsOf: newPerson,
-         showCreatePerson: false })
-        
-      PersonService.add(newPerson);
-   }
    sortPersons = (sortBy) => {
       let numPersons = this.state.persons.length;
       if (sortBy !== this.state.personsSortedBy || numPersons > this.state.numSortedPersons) {
@@ -81,16 +68,33 @@ export default class App extends React.Component {
             numSortedPersons: numPersons
          });
       }
-      else
-         this.setState({ persons: this.state.persons.reverse() });
+      else this.setState({ persons: this.state.persons.reverse() });
    }
 
+   removePerson = (personToRemove) => {
+      this.setState({ persons: this.state.persons.filter((person) => { return person.id !== personToRemove.id }), personToShowDetailsOf: null })
+      PersonService.delete(personToRemove.id)
+   }
+   showAddPerson = () => {
+      (async() => {
+         let langs = await PersonService.getAllLanguages();
+         let cities = await PersonService.getAllCities();
+         this.setState({allCities: cities, allLanguages: langs, showCreatePerson: true });
+      }).call();
+   }
+   addPerson = (newPerson) => {
+      this.setState({ 
+         persons: [...this.state.persons, newPerson], 
+         personToShowDetailsOf: newPerson,
+         showCreatePerson: false })
+        
+      PersonService.add(newPerson);
+   }
    showDetails = (person) => {
-      const fetchData = async() => {
+      (async() => {
          person = await PersonService.get(person.id);
          this.setState({ personToShowDetailsOf: person, showCreatePerson: false })
-      };
-      fetchData();
+      }).call();
    }
 
    render() {
@@ -99,13 +103,13 @@ export default class App extends React.Component {
             <h1>People Register</h1>
             <section className="borderRight">
                <PersonList persons={this.state.persons} sortPersons={this.sortPersons} showDetails={this.showDetails} />
-               <button  className="button-good" onClick={() => this.setState({ showCreatePerson: true })}>&nbsp;+&nbsp;</button>
+               <button  className="button-good" onClick={() => this.showAddPerson()}>&nbsp;+&nbsp;</button>
             </section>
             <section>
                {this.state.showCreatePerson ?
                   <CreatePerson addPerson={this.addPerson} allCities={this.state.allCities} allLanguages={this.state.allLanguages} />
                   : this.state.personToShowDetailsOf !== null ?
-                     <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} allCities={this.state.allCities} allLanguages={this.state.allLanguages} />
+                     <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} />
                      :
                      <h2>Good Morning !</h2>
 
