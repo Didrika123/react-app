@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 export default class PersonDetails extends Component {
    render() {
-      const { person, removePerson } = this.props;
+      const { person, removePerson, editDetails } = this.props;
       if (this.props.person != null) {
          return (
             <div>
@@ -31,6 +31,7 @@ export default class PersonDetails extends Component {
                      </tr>
                   </tbody>
                </table>
+               <button className="button-info" onClick={() => editDetails()}>Edit</button>
                <button className="button-bad" onClick={() => removePerson(person)}>Delete</button>
             </div>
          )

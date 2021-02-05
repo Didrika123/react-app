@@ -28,13 +28,19 @@ class PersonService {
 
       return response != null ? this.dissembleDTOPerson(response.data) : null;
    }
+   async put(person) {
+      let response = await axios.put(url + person.id, this.assembleDTOPerson(person))
+         .catch(function (error) { console.log(error) });
+
+      return response != null ? this.dissembleDTOPerson(response.data) : null;
+   }
 
    async getAllLanguages() {
 
       let response = await axios.get(url + 'languages')
          .catch(function (error) { console.log(error) });
 
-      return response != null ? response.data : null;
+      return response != null ? response.data : [];
    }
 
    async getAllCities() {
@@ -42,7 +48,22 @@ class PersonService {
       let response = await axios.get(url + 'cities')
          .catch(function (error) { console.log(error) });
 
-      return response != null ? response.data : null;
+      return response != null ? response.data : [];
+   }
+
+   async getCitiesOfCountry(id) {
+      let response = await axios.get(url + 'citiesOfCountry/' + id)
+         .catch(function (error) { console.log(error) });
+
+      return response != null ? response.data : [];
+   }
+
+   async getAllCountries() {
+
+      let response = await axios.get(url + 'countries')
+         .catch(function (error) { console.log(error) });
+
+      return response != null ? response.data : [];
    }
 
    assembleDTOPerson(person) {

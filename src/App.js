@@ -8,8 +8,10 @@ export default class App extends React.Component {
    state = {
       persons: [],
       allCities: [],
+      allCountries: [],
       allLanguages: [],
       personToShowDetailsOf: null,
+      editPerson: null,
       personsSortedBy: "unsorted",
       numSortedPersons: 0,
       showCreatePerson: false,
@@ -20,13 +22,8 @@ export default class App extends React.Component {
    componentDidMount = () => {
       (async () => {
          let data = await PersonService.getAll();
-         this.delay();
          this.setState({ persons: data, loadingLeft: false });
       }).call();
-   }
-
-   delay(){
-      for (let i = 0; i < 99999; i+= 0.0001) {};
    }
 
    sortPersons = (sortBy) => {
@@ -45,35 +42,50 @@ export default class App extends React.Component {
       this.setState({ persons: this.state.persons.filter((person) => { return person.id !== personToRemove.id }), personToShowDetailsOf: null })
       PersonService.delete(personToRemove.id)
    }
-   showAddPerson = () => {
+   showAddPerson = (isEditing) => {
+      if(this.state.showCreatePerson)
+         return;
       this.setState({loadingRight: true});
       (async () => {
-         let langs = await PersonService.getAllLanguages();
-         let cities = await PersonService.getAllCities();
-         this.delay();
-         this.setState({ allCities: cities, allLanguages: langs, showCreatePerson: true, loadingRight: false });
+         this.setState({ 
+            allCountries: await PersonService.getAllCountries(), 
+            allLanguages: await PersonService.getAllLanguages(), 
+            showCreatePerson: true, 
+            editPerson: isEditing? this.state.editPerson : null,
+            loadingRight: false });
       }).call();
    }
-   addPerson = (newPerson) => {
+   addPerson = (newPerson, addPersonFail) => {
       (async () => {
-         newPerson = await PersonService.add(newPerson);
+         newPerson = newPerson.id < 1? await PersonService.add(newPerson) : await PersonService.put(newPerson);
          if (newPerson !== null)
             this.setState({
-               persons: [...this.state.persons, newPerson],
+               persons: [newPerson, ...this.state.persons.filter((person) => { return person.id !== newPerson.id })],
                personToShowDetailsOf: newPerson,
-               showCreatePerson: false
+               showCreatePerson: false,
+               editPerson: null
             })
-
+         else addPersonFail.call();
       }).call();
-      if (newPerson === null)
-         return false;
    }
    showDetails = (person) => {
+      if(this.state.personToShowDetailsOf !== null && this.state.personToShowDetailsOf.id === person.id)
+         return;
       this.setState({loadingRight: true});
       (async () => {
          person = await PersonService.get(person.id);
-         this.delay();
          this.setState({ personToShowDetailsOf: person, showCreatePerson: false, loadingRight: false })
+      }).call();
+   }
+   editDetails = () => {
+      this.setState({editPerson: this.state.personToShowDetailsOf});
+      this.showAddPerson(true);
+   }
+   filterCities = (countryId) => {
+      if(isNaN(countryId))
+         return;
+      (async () => {
+         this.setState({ allCities: await PersonService.getCitiesOfCountry(countryId)});
       }).call();
    }
 
@@ -105,9 +117,9 @@ export default class App extends React.Component {
          return (
             <section>
                {this.state.showCreatePerson ?
-                  <CreatePerson addPerson={this.addPerson} allCities={this.state.allCities} allLanguages={this.state.allLanguages} />
+                  <CreatePerson editPerson={this.state.editPerson} addPerson={this.addPerson} filterCities={this.filterCities} allCities={this.state.allCities}  allCountries={this.state.allCountries} allLanguages={this.state.allLanguages} />
                   : this.state.personToShowDetailsOf !== null ?
-                     <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} />
+                     <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} editDetails={this.editDetails} />
                      :
                      <h2>Good Morning !</h2>
                }

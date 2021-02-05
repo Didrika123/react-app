@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-
 const TableHeader = (props) => {
    return (
       <thead>
@@ -12,7 +11,6 @@ const TableHeader = (props) => {
       </thead>
    )
 }
-
 
 const TableBody = (props) => {
 
@@ -30,7 +28,6 @@ const TableBody = (props) => {
 
    return <tbody>{rows}</tbody>
 }
-
 
 export default class PersonList extends Component {
    render() {
