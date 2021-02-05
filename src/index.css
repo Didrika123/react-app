@@ -66,6 +66,11 @@ table tbody tr:nth-child(2n ){
 .button-info{
    background-color: rgb(133, 159, 236);
 }
+.error-text{
+   color: red;
+   display: block;
+   margin-bottom: 1em;
+}
 .container{
    text-align: center;
    margin: 0;

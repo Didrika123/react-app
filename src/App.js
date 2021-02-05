@@ -12,14 +12,21 @@ export default class App extends React.Component {
       personToShowDetailsOf: null,
       personsSortedBy: "unsorted",
       numSortedPersons: 0,
-      showCreatePerson: false
+      showCreatePerson: false,
+      loadingLeft: true,
+      loadingRight: false
    }
 
    componentDidMount = () => {
       (async () => {
          let data = await PersonService.getAll();
-         this.setState({ persons: data });
+         this.delay();
+         this.setState({ persons: data, loadingLeft: false });
       }).call();
+   }
+
+   delay(){
+      for (let i = 0; i < 99999; i+= 0.0001) {};
    }
 
    sortPersons = (sortBy) => {
@@ -39,10 +46,12 @@ export default class App extends React.Component {
       PersonService.delete(personToRemove.id)
    }
    showAddPerson = () => {
+      this.setState({loadingRight: true});
       (async () => {
          let langs = await PersonService.getAllLanguages();
          let cities = await PersonService.getAllCities();
-         this.setState({ allCities: cities, allLanguages: langs, showCreatePerson: true });
+         this.delay();
+         this.setState({ allCities: cities, allLanguages: langs, showCreatePerson: true, loadingRight: false });
       }).call();
    }
    addPerson = (newPerson) => {
@@ -60,9 +69,11 @@ export default class App extends React.Component {
          return false;
    }
    showDetails = (person) => {
+      this.setState({loadingRight: true});
       (async () => {
          person = await PersonService.get(person.id);
-         this.setState({ personToShowDetailsOf: person, showCreatePerson: false })
+         this.delay();
+         this.setState({ personToShowDetailsOf: person, showCreatePerson: false, loadingRight: false })
       }).call();
    }
 
@@ -71,22 +82,35 @@ export default class App extends React.Component {
          <div className="container">
             <h1>People Register</h1>
             <main>
-               <section className="borderRight">
-                  <PersonList persons={this.state.persons} sortPersons={this.sortPersons} showDetails={this.showDetails} />
-                  <button className="button-good" onClick={() => this.showAddPerson()}>&nbsp;+&nbsp;</button>
-               </section>
-               <section>
-                  {this.state.showCreatePerson ?
-                     <CreatePerson addPerson={this.addPerson} allCities={this.state.allCities} allLanguages={this.state.allLanguages} />
-                     : this.state.personToShowDetailsOf !== null ?
-                        <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} />
-                        :
-                        <h2>Good Morning !</h2>
-
-                  }
-               </section>
+               {this.leftSide()}
+               {this.rightSide()}
             </main>
          </div>
       )
+   }
+
+   leftSide = () => {
+      return (
+         <section className="borderRight">
+            <PersonList persons={this.state.persons} sortPersons={this.sortPersons} showDetails={this.showDetails} />
+            {this.state.loadingLeft && <h3>Loading...</h3>}
+            <button className="button-good" onClick={() => this.showAddPerson()}>&nbsp;+&nbsp;</button>
+         </section>)
+   }
+
+   rightSide = () => {
+      if (this.state.loadingRight)
+         return <h3>Loading...</h3>
+      else
+         return (
+            <section>
+               {this.state.showCreatePerson ?
+                  <CreatePerson addPerson={this.addPerson} allCities={this.state.allCities} allLanguages={this.state.allLanguages} />
+                  : this.state.personToShowDetailsOf !== null ?
+                     <PersonDetails person={this.state.personToShowDetailsOf} removePerson={this.removePerson} />
+                     :
+                     <h2>Good Morning !</h2>
+               }
+            </section>)
    }
 }
